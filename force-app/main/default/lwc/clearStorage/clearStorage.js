@@ -1,41 +1,49 @@
-import { LightningElement, wire } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import fetchAllObject from '@salesforce/apex/CallClearStorageBatch.fetchAllObject';
 import fetchObjectRecords from '@salesforce/apex/CallClearStorageBatch.fetchObjectRecords';
 
 export default class ClearStorage extends LightningElement {
 
     isShowModal = false;
-    searchKey; 
-    allObjects = [];
+    @track searchKey; 
     error;
     objectId;
-
+    selectedItems = [];
+    selectedRecord = [];
+    showRecord = 20;
+    allRecord = [];
 
     handleClick(){
         this.isShowModal = true;
-        console.log("++++++++");
     }
 
     closeModal(){
         this.isShowModal = false;
     }
 
+    @wire(fetchAllObject)
+    wiredFetchObject({data, error}){
+        if(data){
+            console.log("+++++++data++++++++ ", data);
+            this.allRecord = data;
+            console.log("++++allrecord+++++ ", this.allRecord);
+        }
+        else if(error){
+            console.log("+++++++++error+++++++++ ", error);
+            this.error = error;
+        }
+    }
+
     handleKeyChange(event){
         this.searchKey = event.target.value;
-        console.log("+++++searchKey+++++ ", this.searchKey);
-        fetchAllObject()
-        .then(result=>{
-            console.log("++++++++++result++++++++ ", result);
-            this.allObjects = result;
-            let filteredObject = this.allObjects.filter(record => {
-                record.includes(this.searchKey)
-            });
-            console.log("+++++++filteredObject++++++++ ", filteredObject);
-        })
-        .catch(error=>{
-            console.log("++++++++error++++++++ ", error);
-        })
-       
+        this.selectedItems=[];
+        this.allRecord.forEach(element => {
+        if(element.includes(this.searchKey)){
+            this.selectedItems.push(element);
+        }
+        });
+        this.selectedRecord = this.selectedItems.slice(0, this.showRecord);
+        console.log("++++++++++selectedRecord+++++++++ ", this.selectedRecord);   
     }
 
     

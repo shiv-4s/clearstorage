@@ -41,9 +41,9 @@
                     </lightning-layout-item>
                 </lightning-layout>
                     <template if:true={searchKey}>
-                        <template for:each={allObjects} for:item="objectitem">
+                        <template for:each={selectedRecord} for:item="objectitem">
                             <div key={objectitem.Id}>
-                            <p onclick={handleSelectedObject} data-id={objectitem.Id}>{objectitem.Label}</p>
+                            <p onclick={handleSelectedObject} data-id={objectitem.Id}>{objectitem}</p>
                         </div>
                         </template>
                     </template>
