@@ -28,23 +28,34 @@
                     <!-- Modal/Popup Box LWC body starts here -->
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                 <lightning-layout
-                            vertical-align="end"
-                            class="slds-var-m-bottom_small"
+                    vertical-align="end"
+                    class="slds-var-m-bottom_small"
                 >
-                    <lightning-layout-item flexibility="grow">
-                        <lightning-input
+                <lightning-layout-item flexibility="grow">
+                    <lightning-input
                         type="search"
                         onchange={handleKeyChange}
                         label="Search"
                         value={searchKey}
-                        ></lightning-input>
-                    </lightning-layout-item>
+                    ></lightning-input>
+                </lightning-layout-item>
                 </lightning-layout>
+                <div>
+                    <template for:each={pillValues} for:item="pillItem" for:index="index">               
+                        <lightning-pill label={pillItem} onremove={removePillItem} 
+                            key={pillItem} name={index}>
+                        </lightning-pill>
+                    </template>
+                </div>
                     <template if:true={searchKey}>
                         <template for:each={selectedRecord} for:item="objectitem">
                             <div key={objectitem.Id}>
-                            <p onclick={handleSelectedObject} data-id={objectitem.Id}>{objectitem}</p>
-                        </div>
+                                <lightning-formatted-text
+                                value={objectitem}
+                                onclick={handleSelectedObject}
+                                >
+                                </lightning-formatted-text>
+                            </div>
                         </template>
                     </template>
                     </div>
@@ -54,7 +65,6 @@
                     </footer>
                 </div>
             </section>
-
         </template>
     </lightning-card>
 </template>

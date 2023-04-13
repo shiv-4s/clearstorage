@@ -7,11 +7,12 @@ export default class ClearStorage extends LightningElement {
     isShowModal = false;
     @track searchKey; 
     error;
-    objectId;
+    objectValue;
     selectedItems = [];
     selectedRecord = [];
     showRecord = 20;
     allRecord = [];
+    pillValues = [];
 
     handleClick(){
         this.isShowModal = true;
@@ -19,6 +20,7 @@ export default class ClearStorage extends LightningElement {
 
     closeModal(){
         this.isShowModal = false;
+        this.pillValues = [];
     }
 
     @wire(fetchAllObject)
@@ -43,19 +45,26 @@ export default class ClearStorage extends LightningElement {
         }
         });
         this.selectedRecord = this.selectedItems.slice(0, this.showRecord);
-        console.log("++++++++++selectedRecord+++++++++ ", this.selectedRecord);   
     }
 
     
     handleSelectedObject(event){
-        this.objectId = event.target.dataset.id;
-        console.log("++++++39 log+++++++ ", event.target);
-        console.log("++++++++objectId++++++++++ ", this.objectId);
+        this.objectValue = event.target.value
+        this.pillValues.push(this.objectValue);
+        console.log("++++++++objectId++++++++++ ", this.pillValues);
+    }
+
+    removePillItem(event) {
+        const pillIndex = event.detail.index ? event.detail.index : event.detail.name;
+        const itempill = this.pillValues; 
+        itempill.splice(pillIndex, 1);       
+        this.pillValues = [...itempill];
+        console.log(pillIndex, this.pillValues);
     }
        
     handleClearStorage(){
         this.isShowModal = false;
-        fetchObjectRecords({objName : this.allObjects[0]})
+        fetchObjectRecords({objName : this.pillValues})
         .then(result=>{
             console.log("+++++++++result++++ ", result);
         })
