@@ -5,7 +5,7 @@
                 <div class="slds-float_left">
                     <lightning-icon icon-name="utility:warning" alternative-text="warning" title="warnign">
                     </lightning-icon>           
-                </div>
+                </div> 
                 <div class="slds-float_right">
                     <lightning-button variant="brand" label="Start" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
                 </div>
@@ -27,29 +27,23 @@
                     </header>
                     <!-- Modal/Popup Box LWC body starts here -->
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                <lightning-layout
-                    vertical-align="end"
-                    class="slds-var-m-bottom_small"
-                >
-                <lightning-layout-item flexibility="grow">
                     <lightning-input
                         type="search"
                         onchange={handleKeyChange}
                         label="Search"
                         value={searchKey}
                     ></lightning-input>
-                </lightning-layout-item>
-                </lightning-layout>
-                <div>
+                <div class="slds-m-around_medium">
                     <template for:each={pillValues} for:item="pillItem" for:index="index">               
-                        <lightning-pill label={pillItem} onremove={removePillItem} 
+                        <lightning-pill label={pillItem} onremove={removePillItem} onclick={handleSelectedObject}
                             key={pillItem} name={index}>
                         </lightning-pill>
                     </template>
                 </div>
+                <div class="slds-m-around_medium">
                     <template if:true={searchKey}>
                         <template for:each={selectedRecord} for:item="objectitem">
-                            <div key={objectitem.Id}>
+                            <div key={objectitem.Id} class="slds-m-around_medium">
                                 <lightning-formatted-text
                                 value={objectitem}
                                 onclick={handleSelectedObject}
@@ -58,6 +52,7 @@
                             </div>
                         </template>
                     </template>
+                </div>
                     </div>
                     <!-- Modal/Popup Box LWC footer starts here -->
                     <footer class="slds-modal__footer">

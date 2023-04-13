@@ -53,7 +53,7 @@ export default class ClearStorage extends LightningElement {
         this.pillValues.push(this.objectValue);
         console.log("++++++++objectId++++++++++ ", this.pillValues);
     }
-
+    
     removePillItem(event) {
         const pillIndex = event.detail.index ? event.detail.index : event.detail.name;
         const itempill = this.pillValues; 
