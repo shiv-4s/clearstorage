@@ -1,32 +1,22 @@
-global with sharing class ClearStorageHandler implements Database.Batchable<sObject>{ 
+public with sharing class ClearStorageHandler{
 
-    public String objApiName;
-
-    public ClearStorageHandler(String objectRecord){
-        this.objApiName = objectRecord;
-        System.debug('+++++objectRecord++++ ' + this.objApiName);
-    }
- 
-    global Database.QueryLocator start(Database.BatchableContext BC){
-        String query = 'SELECT Id FROM ' + this.objApiName + ' ORDER BY CreatedDate DESC LIMIT 10';
-        System.debug('++++query++++ ' + query);
-        return Database.getQueryLocator(query);
-    }
-  
-    global void execute(Database.BatchableContext BC, List<sObject> scope){
-        try {
-            System.debug('+++++scope++++ '+  scope);
-            List<Database.DeleteResult> deleterecord =  Database.delete(scope);
-            System.debug('++++++++deleteresult+++ ' + deleterecord);
-
-        } catch (Exception e) {
-            System.debug('+++++exception+++' + e);
+    @AuraEnabled(cacheable=true)
+    public static List<Object> fetchAllObject(){
+        List<Schema.SObjectType> gd = Schema.getGlobalDescribe().Values();
+        List<Object> objName = new List<String>();
+        for(Schema.SObjectType f : gd){
+            objName.add(f.getDescribe().getName());
         }
+        return objName;
     }
-  
-    global void finish(Database.BatchableContext BC){
 
+    @AuraEnabled
+    public static void fetchObjectRecords(List<String> objName){ // Account, Task , Case
+        CallClearStorageBatch clearObj = new CallClearStorageBatch(objName, 0);
+        Database.executeBatch(clearObj);
+       // Database.executeBatch(clearObj);
+        // CallClearStorageBatch clearst = new CallClearStorageBatch(objName); //not good
+        // Database.executeBatch(clearst);
+        
     }
-    
-
 }

@@ -1,6 +1,6 @@
 import { LightningElement, track, wire } from 'lwc';
-import fetchAllObject from '@salesforce/apex/CallClearStorageBatch.fetchAllObject';
-import fetchObjectRecords from '@salesforce/apex/CallClearStorageBatch.fetchObjectRecords';
+import fetchAllObject from '@salesforce/apex/ClearStorageHandler.fetchAllObject';
+import fetchObjectRecords from '@salesforce/apex/ClearStorageHandler.fetchObjectRecords';
 
 export default class ClearStorage extends LightningElement {
 
@@ -50,7 +50,10 @@ export default class ClearStorage extends LightningElement {
     
     handleSelectedObject(event){
         this.objectValue = event.target.value
+       if(!this.pillValues.includes(this.objectValue)){
         this.pillValues.push(this.objectValue);
+
+       }
         console.log("++++++++objectId++++++++++ ", this.pillValues);
     }
     
