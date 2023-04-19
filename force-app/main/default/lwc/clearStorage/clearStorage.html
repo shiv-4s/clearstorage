@@ -11,6 +11,46 @@
                 </div>
             </div>
         </div>
+        <!-- <div class="slds-p-top_small">
+            <template if:true={IsAsyncRecordShow}>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="JobItemsProcessed">JobItemsProcessed</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="NumberOfErrors">NumberOfErrors</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Status">Status</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="TotalJobItems">TotalJobItems</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="aysncapex">
+                            <template for:each={batchId} for:item="batchitem">
+                            <tr class="slds-col" key={batchitem.Id}>
+                                <td  scope="row">
+                                    <p>{batchitem.JobItemsProcessed}</p>
+                                </td>
+                                <td scope="row">
+                                    <p>{batchitem.NumberOfErrors}</p>
+                                </td>
+                                <td  scope="row">
+                                    <p>{batchitem.Status}</p>
+                                </td>
+                                <td  scope="row">
+                                    <p>{batchitem.TotalJobItems}</p>
+                                </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table> 
+            </template>
+        </div> -->
         <template if:true={isShowModal}>
             <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
                 <div class="slds-modal__container">
@@ -34,10 +74,12 @@
                         value={searchKey}
                     ></lightning-input>
                 <div class="slds-m-around_medium">
-                    <template for:each={pillValues} for:item="pillItem" for:index="index">               
-                        <lightning-pill label={pillItem} onremove={removePillItem} onclick={handleSelectedObject}
-                            key={pillItem} name={index}>
-                        </lightning-pill>
+                    <template if:true={pillValues}>
+                        <template for:each={pillValues} for:item="pillItem" for:index="index">               
+                           <lightning-pill label={pillItem} onremove={removePillItem} onclick={handleSelectedObject}
+                               key={pillItem} name={index}>
+                           </lightning-pill>
+                        </template>
                     </template>
                 </div>
                 <div class="slds-m-around_medium">

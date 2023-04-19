@@ -13,10 +13,6 @@ public with sharing class ClearStorageHandler{
     @AuraEnabled
     public static void fetchObjectRecords(List<String> objName){ // Account, Task , Case
         CallClearStorageBatch clearObj = new CallClearStorageBatch(objName, 0);
-        Database.executeBatch(clearObj);
-       // Database.executeBatch(clearObj);
-        // CallClearStorageBatch clearst = new CallClearStorageBatch(objName); //not good
-        // Database.executeBatch(clearst);
-        
+        ID firstBatchId = Database.executeBatch(clearObj);
     }
 }

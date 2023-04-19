@@ -1,9 +1,12 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import fetchAllObject from '@salesforce/apex/ClearStorageHandler.fetchAllObject';
 import fetchObjectRecords from '@salesforce/apex/ClearStorageHandler.fetchObjectRecords';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { subscribe, unsubscribe } from 'lightning/empApi';
 
 export default class ClearStorage extends LightningElement {
 
+    IsAsyncRecordShow = false;
     isShowModal = false;
     @track searchKey; 
     error;
@@ -13,6 +16,12 @@ export default class ClearStorage extends LightningElement {
     showRecord = 20;
     allRecord = [];
     pillValues = [];
+    subscription = {};
+    @api channelName = '/event/Batch_Event__e';
+
+    connectedCallback() {
+        this.handleSubscribe();
+    }
 
     handleClick(){
         this.isShowModal = true;
@@ -46,13 +55,12 @@ export default class ClearStorage extends LightningElement {
         });
         this.selectedRecord = this.selectedItems.slice(0, this.showRecord);
     }
-
     
     handleSelectedObject(event){
         this.objectValue = event.target.value
+        console.log("++++++++event++++++ ", event.target);
        if(!this.pillValues.includes(this.objectValue)){
         this.pillValues.push(this.objectValue);
-
        }
         console.log("++++++++objectId++++++++++ ", this.pillValues);
     }
@@ -67,13 +75,42 @@ export default class ClearStorage extends LightningElement {
        
     handleClearStorage(){
         this.isShowModal = false;
+        this.IsAsyncRecordShow = true;
         fetchObjectRecords({objName : this.pillValues})
         .then(result=>{
-            console.log("+++++++++result++++ ", result);
+            console.log("+++++result+++++ ", result);
+            const evt = new ShowToastEvent({
+                title: 'Started',
+                message: 'Job Started Successfully',
+                variant: 'Success',
+                mode: 'dismissible'
+            });
+            this.dispatchEvent(evt);
+            this.pillValues = [];
         })
         .catch(error=>{
             console.log("+++++++++error+++++ ", error);
         })
-
     }
+
+    // Handles subscribe button click
+    handleSubscribe() {
+        // Callback invoked whenever a new event message is received
+        // Invoke subscribe method of empApi. Pass reference to messageCallback
+        subscribe(this.channelName, -1, this.messageCallback).then(response => {
+            // Response contains the subscription information on subscribe call
+            console.log('Subscription request sent to: ', JSON.stringify(response.channel));
+            this.subscription = response;
+            console.log("+++++++subs++++++++ ",JSON.stringify(this.subscription));
+        });
+    }
+
+    messageCallback = function (response) {
+        console.log('New message received 1: ', JSON.stringify(response));
+        console.log('New message received 2: ', response);
+        var obj = JSON.parse(JSON.stringify(response));
+        console.log("+++obj+++", obj.data.payload);
+
+    };
+    
 }
