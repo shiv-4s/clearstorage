@@ -15,39 +15,24 @@
             <template if:true={IsAsyncRecordShow}>
                     <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
                         <thead>
-                            <tr class="slds-line-height_reset">
-                                <th class="" scope="col">
-                                    <div class="slds-truncate" title="JobItemsProcessed">JobItemsProcessed</div>
-                                </th>
-                                <th class="" scope="col">
-                                    <div class="slds-truncate" title="NumberOfErrors">NumberOfErrors</div>
-                                </th>
-                                <th class="" scope="col">
-                                    <div class="slds-truncate" title="Status">Status</div>
-                                </th>
-                                <th class="" scope="col">
-                                    <div class="slds-truncate" title="TotalJobItems">TotalJobItems</div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="aysncapex">
-                            <template for:each={batchId} for:item="batchitem">
-                            <tr class="slds-col" key={batchitem.Id}>
+                            <tr class="slds-col">
                                 <td  scope="row">
-                                    <p>{batchitem.JobItemsProcessed}</p>
+                                    <p>{batchRecord.ApexApiName__c}</p>
                                 </td>
                                 <td scope="row">
-                                    <p>{batchitem.NumberOfErrors}</p>
+                                    <p>{batchRecord.ApexStatus__c}</p>
                                 </td>
                                 <td  scope="row">
-                                    <p>{batchitem.Status}</p>
+                                    <p>{batchRecord.ApexJobId__c}</p>
                                 </td>
                                 <td  scope="row">
-                                    <p>{batchitem.TotalJobItems}</p>
+                                    <p>{batchRecord.ApexTotalJobItems__c}</p>
+                                </td>
+                                <td  scope="row">
+                                    <p>{batchRecord.ApexJobItemsProcessed__c}</p>
                                 </td>
                                 </tr>
-                            </template>
-                        </tbody>
+                        </thead> 
                     </table> 
             </template>
         </div> -->

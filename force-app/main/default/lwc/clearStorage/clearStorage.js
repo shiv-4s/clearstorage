@@ -6,6 +6,12 @@ import { subscribe, unsubscribe } from 'lightning/empApi';
 
 export default class ClearStorage extends LightningElement {
 
+    ApexApiName;
+    ApexStatus;
+    ApexJobId;
+    ApexTotalJobItems;
+    ApexJobItemsProcessed;
+    @track batchRecord;
     IsAsyncRecordShow = false;
     isShowModal = false;
     @track searchKey; 
@@ -58,7 +64,6 @@ export default class ClearStorage extends LightningElement {
     
     handleSelectedObject(event){
         this.objectValue = event.target.value
-        console.log("++++++++event++++++ ", event.target);
        if(!this.pillValues.includes(this.objectValue)){
         this.pillValues.push(this.objectValue);
        }
@@ -106,11 +111,11 @@ export default class ClearStorage extends LightningElement {
     }
 
     messageCallback = function (response) {
-        console.log('New message received 1: ', JSON.stringify(response));
         console.log('New message received 2: ', response);
         var obj = JSON.parse(JSON.stringify(response));
-        console.log("+++obj+++", obj.data.payload);
-
+        this.batchRecord = obj.data.payload;
+        console.log("++++completebatchrecord++++ ", this.batchRecord);
+       
     };
     
 }

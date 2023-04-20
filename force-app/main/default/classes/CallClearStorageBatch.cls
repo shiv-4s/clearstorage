@@ -2,9 +2,7 @@ global with sharing class CallClearStorageBatch implements Database.Batchable<sO
 
     public List<String> objApiName;
     public String query;
-    public Integer objectIndex = 0;
-    public Id apexId;
-
+    public Integer objectIndex;
 
     public CallClearStorageBatch(List<String> sobjectName, Integer previousIndex){
         objApiName = sobjectName;
@@ -14,7 +12,8 @@ global with sharing class CallClearStorageBatch implements Database.Batchable<sO
     global Database.QueryLocator start(Database.BatchableContext BC){
         
         try {
-            query = 'SELECT Id FROM ' + objApiName[objectIndex] + ' ORDER BY CreatedDate DESC LIMIT 2';
+            System.debug('++++index++++' + objectIndex);
+            query = 'SELECT Id FROM ' + objApiName[objectIndex] + ' ORDER BY CreatedDate DESC';
             System.debug('++++query++++ ' + query);
         } 
         catch (Exception e) {
@@ -32,15 +31,17 @@ global with sharing class CallClearStorageBatch implements Database.Batchable<sO
                                         TotalJobItems, 
                                         NumberOfErrors 
                                         FROM AsyncApexJob WHERE ID =: BC.getJobId()];
-             //Creating PE instances
+            //Creating PE instances
             List<Batch_Event__e> batchIdList = new List<Batch_Event__e>();
             Batch_Event__e batchEvent = new Batch_Event__e();
             batchEvent.ApexJobId__c = BC.getJobId();
             batchEvent.ApexApiName__c = objApiName[objectIndex];
+            batchEvent.ApexTotalJobItems__c = secondJob.TotalJobItems;
+            batchEvent.ApexJobItemsProcessed__c = secondJob.JobItemsProcessed;
             batchEvent.ApexStatus__c = secondJob.Status;
             batchIdList.add(batchEvent);
             System.debug('+++batchIdList++' + batchIdList);
-                // Call method to publish events
+            // Call method to publish events
             Database.SaveResult[] batchResultList = EventBus.publish(batchIdList); 
         } 
         catch (Exception e) {
@@ -49,15 +50,30 @@ global with sharing class CallClearStorageBatch implements Database.Batchable<sO
     }
   
     global void finish(Database.BatchableContext BC){
+
+        AsyncApexJob secondJob = [SELECT Id, 
+        Status,
+        JobItemsProcessed,
+        TotalJobItems, 
+        NumberOfErrors 
+        FROM AsyncApexJob WHERE ID =: BC.getJobId()];
+        //Creating PE instances
+        List<Batch_Event__e> batchIdList = new List<Batch_Event__e>();
+        Batch_Event__e batchEvent = new Batch_Event__e();
+        batchEvent.ApexJobId__c = BC.getJobId();
+        batchEvent.ApexApiName__c = objApiName[objectIndex];
+        batchEvent.ApexTotalJobItems__c = secondJob.TotalJobItems;
+        batchEvent.ApexJobItemsProcessed__c = secondJob.JobItemsProcessed;
+        batchEvent.ApexStatus__c = secondJob.Status;
+        batchIdList.add(batchEvent);
+        System.debug('+++batchIdList++' + batchIdList);
+        // Call method to publish events
+        Database.SaveResult[] batchResultList = EventBus.publish(batchIdList); 
+        
         if (objectIndex < objApiName.size()-1){
-           // objectIndex = objectIndex + 1;
-           // query = 'SELECT Id FROM ' + objApiName[objectIndex] + ' ORDER BY CreatedDate DESC LIMIT 2';
             System.debug('+++objApiName+++' + objApiName);
             CallClearStorageBatch clearObj = new CallClearStorageBatch(objApiName,++objectIndex);
-            //System.debug('++objectIndex+++' + objectIndex);
-            //System.debug('++++finishquery++++ ' + query);    
-            apexId = Database.executeBatch(clearObj);
-            
+            Database.executeBatch(clearObj);
         }
       
         /* Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
